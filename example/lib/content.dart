@@ -8,7 +8,7 @@ class ContentWidget extends StatefulWidget {
 
   /// Creates a new content widget instance.
   const ContentWidget({
-    @required this.rateMyApp,
+    required this.rateMyApp,
   });
 
   @override
@@ -56,7 +56,7 @@ class _ContentWidgetState extends State<ContentWidget> {
                 await widget.rateMyApp.showStarRateDialog(context,
                     actionsBuilder: (_, stars) => starRateDialogActionsBuilder(
                         context,
-                        stars)); // We launch the Rate my app dialog with stars.
+                        stars ?? 0)); // We launch the Rate my app dialog with stars.
                 refresh();
               },
               child: const Text('Launch "Rate my app" star dialog'),
@@ -103,7 +103,7 @@ class _ContentWidgetState extends State<ContentWidget> {
 
     // Otherwise we can do some little more things...
     String message = 'You put ' + stars.round().toString() + ' star(s). ';
-    Color color;
+    Color? color;
     switch (stars.round()) {
       case 1:
         message += 'Did this app hurt you physically ?';

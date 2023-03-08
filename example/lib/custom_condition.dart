@@ -12,10 +12,10 @@ class MaxDialogOpeningCondition extends DebuggableCondition {
   final int maxStarDialogOpeningCount;
 
   /// Current dialog opening count.
-  int dialogOpeningCount;
+  int? dialogOpeningCount;
 
   /// Current star dialog opening count.
-  int starDialogOpeningCount;
+  int? starDialogOpeningCount;
 
   /// Creates a new max dialog opening condition instance.
   MaxDialogOpeningCondition({
@@ -35,13 +35,13 @@ class MaxDialogOpeningCondition extends DebuggableCondition {
   }
 
   @override
-  Future<void> saveToPreferences(
+  Future<Future<bool>> saveToPreferences(
       SharedPreferences preferences, String preferencesPrefix) async {
     // Here we save our current values.
     await preferences.setInt(
-        preferencesPrefix + 'dialogOpeningCount', dialogOpeningCount);
+        preferencesPrefix + 'dialogOpeningCount', dialogOpeningCount ?? 0);
     return preferences.setInt(
-        preferencesPrefix + 'starDialogOpeningCount', starDialogOpeningCount);
+        preferencesPrefix + 'starDialogOpeningCount', starDialogOpeningCount ?? 0);
   }
 
   @override
@@ -55,13 +55,13 @@ class MaxDialogOpeningCondition extends DebuggableCondition {
   bool onEventOccurred(RateMyAppEventType eventType) {
     if (eventType == RateMyAppEventType.dialogOpen) {
       // If the default dialog has been opened, we update our default dialog counter.
-      dialogOpeningCount++;
+      dialogOpeningCount = (dialogOpeningCount ?? 0) + 1;
       return true; // Returning true allows to trigger a shared preferences save.
     }
 
     if (eventType == RateMyAppEventType.starDialogOpen) {
       // If the star dialog has been opened, we update our star dialog counter.
-      starDialogOpeningCount++;
+      starDialogOpeningCount = (starDialogOpeningCount ?? 0) + 1;
       return true;
     }
 
@@ -84,7 +84,7 @@ class MaxDialogOpeningCondition extends DebuggableCondition {
   @override
   bool get isMet {
     // This allows to check whether this condition is met in its current state.
-    return dialogOpeningCount <= maxDialogOpeningCount &&
-        starDialogOpeningCount <= maxStarDialogOpeningCount;
+    return (dialogOpeningCount ?? 0) <= maxDialogOpeningCount &&
+        (starDialogOpeningCount ?? 0) <= maxStarDialogOpeningCount;
   }
 }
